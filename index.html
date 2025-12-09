@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LEXIBUY — Green & Dark</title>
+<style>
+body { margin:0; font-family:Arial,sans-serif; background:#071017; color:#e6f0ee; }
+.navbar {display:flex; justify-content:space-between; align-items:center; padding:15px 50px; background:#0f1a1c; box-shadow:0 2px 5px rgba(0,0,0,0.5); flex-wrap:wrap;}
+.navbar .logo{font-size:24px; font-weight:bold; color:#2ECC71;}
+.navbar input{padding:8px 12px;border-radius:8px;border:none;width:300px;margin-left:30px; background:#031718; color:#e6f0ee;}
+.navbar .account{font-size:18px; cursor:pointer;}
+.hero{text-align:center;padding:60px 20px;}
+.hero h1{font-size:40px;color:#2ECC71;margin-bottom:15px;}
+.hero p{font-size:18px;color:#9aa9a6;margin-bottom:20px;}
+.hero button{background:#2ECC71;border:none;padding:12px 25px;border-radius:8px;font-size:16px;font-weight:bold;color:#042017;transition:.2s;}
+.hero button:hover{background:#24b66b;}
+.categories-container{position:relative;}
+.categories{display:flex;gap:15px;padding:20px 20px;overflow-x:auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
+.categories button{background:#0f1a1c;border:none;padding:8px 15px;border-radius:5px;color:#2ECC71;white-space:nowrap;min-width:80px;transition:.2s;cursor:pointer;}
+.categories button:hover{background:#2ECC71;color:#042017;}
+.categories button.active{background:#2ECC71;color:#042017;}
+.categories-container::before,.categories-container::after{content:"";position:absolute;top:0;width:20px;height:100%;pointer-events:none;z-index:2;}
+.categories-container::before{left:0;background:linear-gradient(to right,#071017,transparent);}
+.categories-container::after{right:0;background:linear-gradient(to left,#071017,transparent);}
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:20px 30px;}
+.product-card{background:#0f1a1c;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;transition:transform .2s,box-shadow .2s;}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 10px 15px rgba(0,0,0,0.5);}
+.product-card img{width:100%;height:150px;object-fit:cover;}
+.product-card .info{padding:10px;}
+.product-card .info h3{margin:0 0 5px;font-size:18px;}
+.product-card .info p{margin:0 0 10px;font-size:14px;color:#9aa9a6;}
+.product-card .info span{font-weight:bold;color:#2ECC71;}
+.product-card button{margin:10px;padding:8px;border:none;border-radius:5px;background:#2ECC71;color:#042017;font-weight:bold;transition:.2s;cursor:pointer;}
+.product-card button:hover{background:#24b66b;}
+#loginOverlay{
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(2,8,10,0.95);
+  display:flex; justify-content:center; align-items:center;
+  z-index:9999;
+}
+#loginBox{
+  background:#0f1a1c; padding:30px; border-radius:12px; text-align:center;
+  width:90%; max-width:400px; box-shadow:0 0 15px rgba(46,204,113,0.4);
+}
+#loginBox input{
+  width:100%; margin:10px 0; padding:12px; border-radius:8px; border:none;
+  background:#031718; color:#e6f0ee; font-size:16px;
+}
+#loginBox button{
+  width:100%; padding:12px; margin-top:15px; border:none; border-radius:8px;
+  background:#2ECC71; color:#042017; font-weight:bold; font-size:16px; cursor:pointer;
+  box-shadow:0 4px 8px rgba(46,204,113,0.3); transition:0.2s;
+}
+#loginBox button:hover{
+  background:#24b66b; box-shadow:0 6px 12px rgba(46,204,113,0.5);
+}
+.auth-switch{color:#9aa9a6;font-size:14px;margin-top:12px;}
+.auth-switch span{color:#2ECC71;cursor:pointer;}
+@media(max-width:600px){
+  .navbar{flex-direction:column;gap:10px;padding:15px 20px;}
+  .navbar input{width:100%;margin-left:0;}
+  .hero h1{font-size:28px;}
+  .hero p{font-size:16px;}
+  .product-grid{padding:20px 10px;}
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo">LEXIBUY</div>
+  <input type="search" placeholder="Search items..." id="searchBox">
+  <div class="account" id="accountName">Account</div>
+</div>
+
+<div class="hero">
+  <h1>Welcome to LEXIBUY</h1>
+  <p>Buy & Sell Digital Assets: Software, Codes, Accounts, Audio, and More!</p>
+  <button onclick="openUpload()">Upload Product</button>
+</div>
+
+<div class="categories-container">
+  <div class="categories" id="categoryBar">
+    <button data-cat="all" class="active">All</button>
+    <button data-cat="Software">Software</button>
+    <button data-cat="Codes">Codes</button>
+    <button data-cat="Audio">Audio</button>
+    <button data-cat="Images">Images</button>
+    <button data-cat="Documents">Documents</button>
+    <button data-cat="Templates">Templates</button>
+    <button data-cat="Tools">Tools</button>
+  </div>
+</div>
+
+<div id="uploadContainer" style="display:none;">
+  <h2>Upload Product</h2>
+  <input type="text" id="title" placeholder="Title">
+  <input type="text" id="description" placeholder="Description">
+  <input type="number" id="price" placeholder="Price">
+  <input type="text" id="category" placeholder="Category">
+  <input type="file" id="file"><br>
+  <button onclick="uploadProduct()">Upload</button>
+</div>
+
+<div class="product-grid" id="productGrid"></div>
+
+<footer>&copy; 2025 LEXIBUY. All rights reserved.</footer>
+
+<div id="loginOverlay">
+  <div id="loginBox">
+    <h2 id="authTitle">Sign In / Sign Up</h2>
+    <input type="email" id="email" placeholder="Email">
+    <button id="authBtn">Send Magic Link</button>
+    <p class="auth-switch" id="authSwitch">Already have an account? <span id="switchMode">Sign in now!</span></p>
+  </div>
+</div>
+
+<script>
+const supabaseUrl = 'https://aqorvefjdlzliubfnxss.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFxb3J2ZWZqZGx6bGl1YmZueHNzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyMTIwNDQsImV4cCI6MjA4MDc4ODA0NH0.OLDGmb53Bd9MDVQgx-6DcTtC9PaPUQwb3LjmDODHeno';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+const loginOverlay = document.getElementById('loginOverlay');
+const authBtn = document.getElementById('authBtn');
+const accountName = document.getElementById('accountName');
+
+function openLogin(){ loginOverlay.style.display='flex'; }
+function closeLogin(){ loginOverlay.style.display='none'; }
+function openUpload(){ 
+  requireLogin(()=>document.getElementById('uploadContainer').style.display='block'); 
+}
+
+// Magic Link Login
+authBtn.addEventListener('click', async ()=>{
+  const email = document.getElementById('email').value.trim();
+  if(!email) return alert("Enter your email!");
+  const { data, error } = await supabaseClient.auth.signInWithOtp({ 
+    email, 
+    options: { emailRedirectTo: window.location.href } 
+  });
+  if(error) return alert(error.message);
+  alert("Magic link sent! Check your email.");
+  closeLogin();
+});
+
+// Keep user logged in
+supabaseClient.auth.getSession().then(({data})=>{
+  const user = data.session?.user;
+  if(user){
+    accountName.innerText = user.email;
+  }
+});
+
+async function requireLogin(cb){
+  const { data:{ session } } = await supabaseClient.auth.getSession();
+  if(session?.user) return cb();
+  openLogin();
+  const unsub = supabaseClient.auth.onAuthStateChange((event, session)=>{
+    if(session?.user){
+      unsub.subscription.unsubscribe();
+      accountName.innerText = session.user.email;
+      cb();
+      closeLogin();
+    }
+  });
+}
+
+// Upload function
+async function uploadProduct(){
+  const { data:{ session } } = await supabaseClient.auth.getSession();
+  const user = session?.user;
+  if(!user) return alert("Please login first");
+
+  const title=document.getElementById('title').value.trim();
+  const description=document.getElementById('description').value.trim();
+  const price=document.getElementById('price').value;
+  const category=document.getElementById('category').value.trim();
+  const file=document.getElementById('file').files?.[0];
+  if(!title||!price||!category||!file) return alert("Fill all fields");
+
+  const path = 'products/'+Date.now()+'-'+file.name;
+  const { data: uploadData, error: uploadErr } = await supabaseClient.storage.from('product-assets').upload(path, file);
+  if(uploadErr) return alert(uploadErr.message);
+
+  const { data: urlData } = supabaseClient.storage.from('product-assets').getPublicUrl(path);
+  const { error: dbErr } = await supabaseClient.from('Products').insert([{
+    title, description, price, category, image_url: urlData.publicUrl, seller_id:user.id, approved:true
+  }]);
+  if(dbErr) return alert(dbErr.message);
+  alert("Product uploaded!");
+  fetchProducts();
+}
+
+// Fetch products
+async function fetchProducts(){
+  const { data, error } = await supabaseClient.from('Products').select('*').eq('approved',true);
+  if(error) return console.error(error.message);
+  renderProducts(data);
+}
+
+function renderProducts(data){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML='';
+  const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+  const activeCat = document.querySelector('.categories button.active').dataset.cat;
+  data.filter(p=>{
+    const matchesCat = activeCat==='all'||p.category===activeCat;
+    const matchesSearch = !searchTerm||p.title.toLowerCase().includes(searchTerm)||p.category.toLowerCase().includes(searchTerm);
+    return matchesCat && matchesSearch;
+  }).forEach(p=>{
+    const card=document.createElement('div');
+    card.className='product-card';
+    card.innerHTML=`<img src="${p.image_url}" alt="${p.title}">
+      <div class="info">
+        <h3>${p.title}</h3>
+        <p>${p.description}</p>
+        <span>$${p.price}</span>
+      </div>
+      <button onclick="alert('Ready to buy: ${p.title}')">Buy Now</button>`;
+    grid.appendChild(card);
+  });
+}
+
+// Search & category
+document.getElementById('searchBox').addEventListener('input', fetchProducts);
+document.querySelectorAll('.categories button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.categories button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    fetchProducts();
+  });
+});
+
+fetchProducts();
+</script>
+</body>
+</html>
