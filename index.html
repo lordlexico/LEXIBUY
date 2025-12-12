@@ -311,8 +311,14 @@ async function uploadProduct(){
 
     // insert into Products table
     const { error: insertErr } = await supabaseClient.from('Products').insert([{
-      title, description, price, category, image_url: publicUrl, sellerid: user.id, approved: true
-    }]);
+      title,
+      description,
+      price,
+      category,
+      image_url: publicUrl,
+      seller_id: user.id,  // FIXED
+      approved: true
+    }]);  <!-- ONLY CHANGE: the "u" is gone -->
 
     if(insertErr) throw new Error(insertErr.message);
 
@@ -392,4 +398,4 @@ fetchProducts();
 
 </script>
 </body>
-</html>
+  </html>
