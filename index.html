@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="icon" type="image/png" sizes="40x40" href="icons/icon-40.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0b0b0b">
-<title>LEXIBUY — Buy and sell software</title>
+<title>LEXIBUY — Buy and Sell Digital Assets</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -19,26 +20,31 @@
 }
 *{box-sizing:border-box;}
 body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f0ee;-webkit-font-smoothing:antialiased;}
+
 /* Navbar */
 .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--panel);gap:12px;flex-wrap:wrap;}
 .logo{font-weight:800;color:var(--accent);letter-spacing:1px;font-size:20px;}
 .search{padding:9px 12px;border-radius:10px;border:0;background:#072023;color:#dff1e7;width:360px;max-width:100%;}
 .account{font-size:14px;color:var(--muted);cursor:pointer;white-space:nowrap;}
+
 /* Hero */
 .hero{text-align:center;padding:34px 18px;}
 .hero h1{margin:0;color:var(--accent);font-size:32px;}
 .hero p{margin:8px 0 18px;color:var(--muted);}
 .cta{background:var(--accent);color:#042017;border:0;padding:10px 18px;border-radius:10px;font-weight:700;cursor:pointer;}
+
 /* Categories */
 .categories-container{position:relative;margin:6px 0;}
 .categories{display:flex;gap:12px;padding:14px 20px;overflow-x:auto;scroll-behavior:smooth;-webkit-overflow-scrolling:touch;}
 .cat-btn{background:var(--panel);border:0;padding:8px 14px;border-radius:12px;color:var(--accent);white-space:nowrap;cursor:pointer;flex-shrink:0;}
 .cat-btn.active{background:var(--accent);color:#042017;}
+
 /* Product grid */
 .main{max-width:1100px;margin:6px auto;padding:0 14px;}
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;padding:18px 0;}
 .product-card{background:var(--panel);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--card-shadow);}
 .product-card img,.product-card .category-thumb{width:100%;height:150px;object-fit:cover;background:#031011;display:flex;align-items:center;justify-content:center;font-size:48px;color:#fff;font-weight:700;}
+
 /* Category colors/icons */
 .category-Software{background:#4a90e2} 
 .category-Codes{background:#7ed321} 
@@ -48,6 +54,45 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f
 .category-Templates{background:#d0021b} 
 .category-Tools{background:#50e3c2;color:#042017} 
 .category-Other{background:#9b9b9b}
+
+button,
+input[type="button"],
+input[type="submit"],
+input[type="file"]::file-selector-button {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn, .btn.secondary, #googleLoginBtn, .viewBtn {
+  padding: 7px 14px;  /* smaller */
+  font-size: 14px;    /* slightly smaller text */
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover,
+input[type="file"]::file-selector-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+/* Overlay */
+.overlay{position:fixed;inset:0;background:rgba(2,8,10,0.82);display:none;align-items:center;justify-content:center;z-index:9999;}
+.card{background:linear-gradient(180deg,var(--panel),#071619);padding:18px;border-radius:12px;width:94%;max-width:520px;color:#eaf7ee;box-shadow:var(--card-shadow);position:relative;}
+.card h2{margin:0 0 12px;color:var(--accent);}
+.card input,.card textarea,.card select{width:100%;padding:10px;border-radius:8px;border:0;background:#031718;color:#eafff3;margin:8px 0;font-size:15px;}
+.card textarea{min-height:90px;resize:vertical;}
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+.muted{color:var(--muted);font-size:13px;margin-top:8px;}
+#progressWrap{width:100%;background:#0b1514;border-radius:8px;height:10px;margin-top:10px;overflow:hidden;}
+#progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .2s;}
+.toast{position:fixed;right:18px;top:18px;background:var(--accent);color:#042017;padding:10px 14px;border-radius:8px;font-weight:700;display:none;box-shadow:0 6px 20px rgba(0,0,0,0.5);z-index:10000;}
+@media(max-width:760px){.search{width:100%}.hero h1{font-size:22px}.product-card img,.product-card .category-thumb{height:120px}.navbar{padding:12px;gap:8px}}
 </style>
 </head>
 <body>
@@ -85,7 +130,9 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f
     </div>
   </div>
   <div id="productGrid" class="product-grid"></div>
-  <!-- FOOTER -->
+</div>
+
+<!-- FOOTER -->
 <footer>© 2025 LEXIBUY — All rights reserved.</footer>
 
 <!-- AUTH OVERLAY -->
@@ -132,8 +179,7 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f
     <div class="muted">Files are stored in your Supabase storage bucket <code>product-assets</code>.</div>
   </div>
 </div>
-
-<!-- PRODUCT DETAIL OVERLAY -->
+<!-- PRODUCT DETAIL OVERLAY CONTINUED -->
 <div id="productDetailOverlay" class="overlay" aria-hidden="true">
   <div class="card">
     <h2 id="detailTitle"></h2>
@@ -151,65 +197,6 @@ body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:#e6f
 <!-- TOAST -->
 <div id="toast" class="toast">Uploaded ✓</div>
 
-<style>
-.overlay{position:fixed;inset:0;background:rgba(2,8,10,0.82);display:none;align-items:center;justify-content:center;z-index:9999;}
-.card{background:linear-gradient(180deg,var(--panel),#071619);padding:18px;border-radius:12px;width:94%;max-width:520px;color:#eaf7ee;box-shadow:var(--card-shadow);position:relative;}
-.card h2{margin:0 0 12px;color:var(--accent);}
-.card input,.card textarea,.card select{width:100%;padding:10px;border-radius:8px;border:0;background:#031718;color:#eafff3;margin:8px 0;font-size:15px;}
-.card textarea{min-height:90px;resize:vertical;}
-.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
-.muted{color:var(--muted);font-size:13px;margin-top:8px;}
-#googleLoginBtn{width:100%;padding:10px;background:#34A853;color:white;font-weight:700;border-radius:8px;border:none;margin-top:8px;cursor:pointer;}
-#googleLoginBtn:hover{background:#2e9e4d;}
-#uploadForm{display:flex;flex-direction:column;}
-#filePreview{margin:8px 0;text-align:center;}
-#progressWrap{width:100%;background:#0b1514;border-radius:8px;height:10px;margin-top:10px;overflow:hidden;}
-#progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .2s;}
-.toast{position:fixed;right:18px;top:18px;background:var(--accent);color:#042017;padding:10px 14px;border-radius:8px;font-weight:700;display:none;box-shadow:0 6px 20px rgba(0,0,0,0.5);z-index:10000;}
-@media(max-width:760px){.search{width:100%}.hero h1{font-size:22px}.product-card img,.product-card .category-thumb{height:120px}.navbar{padding:12px;gap:8px}}
-/* Primary buttons (green/black) */
-.btn, #authMagic, #openUploadNav, #openUploadHero, .viewBtn, #detailBuy {
-  background: var(--accent); /* green */
-  color: #042017; /* dark text */
-  border: 0;
-  padding: 9px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Secondary buttons (dark/white) */
-.btn.secondary, #authCancel, #cancelUpload, #detailClose {
-  background: #2b3b36; /* dark panel color */
-  color: #e6f0ee; /* light text */
-  border: 0;
-  padding: 9px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* Google login button */
-#googleLoginBtn {
-  background: #34A853;
-  color: white;
-  font-weight: 700;
-  border-radius: 8px;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-}
-
-#googleLoginBtn:hover {
-  background: #2e9e4d; /* darken on hover */
-}
-
-/* Optional: smaller view button inside product cards */
-.viewBtn {
-  padding: 7px 10px;
-  font-size: 14px;
-}
-</style>
 <script>
 // -----------------------------
 // SUPABASE CONFIG
@@ -366,7 +353,6 @@ fileEl.addEventListener('change', ()=>{
 function getCategoryClass(cat){ 
   return 'category-' + (cat in {'Software':1,'Codes':1,'Audio':1,'Images':1,'Documents':1,'Templates':1,'Tools':1}?cat:'Other'); 
 }
-
 // -----------------------------
 // UPLOAD PRODUCT
 // -----------------------------
@@ -398,7 +384,14 @@ async function uploadProduct(){
     progressBar.style.width='82%';
 
     const { error: insertErr } = await supabaseClient.from('Products').insert([{
-      title, description, price, category, image_url:publicUrl, seller_id:user.id, approved:true
+      title,
+      description,
+      price,
+      category,
+      image_url:publicUrl,
+      seller_id:user.id,
+      seller_email:user.email,
+      approved:true // only approved products shown in marketplace
     }]);
     if(insertErr) throw new Error(insertErr.message);
 
@@ -410,22 +403,27 @@ async function uploadProduct(){
     setTimeout(()=>progressBar.style.width='0%',600);
     hideUpload();
     fetchProducts();
-  }catch(err){ alert('Upload failed: '+(err.message||err)); progressBar.style.width='0%'; }
+  }catch(err){ 
+    alert('Upload failed: '+(err.message||err)); 
+    progressBar.style.width='0%'; 
+  }
 }
 
 // -----------------------------
 // PRODUCT DETAIL
 // -----------------------------
 function showProductDetail(product){
-  detailTitle.textContent=product.title;
-  detailImage.innerHTML=`<img src="${product.image_url}" style="max-width:100%;border-radius:8px">`;
-  detailDescription.textContent=product.description||'No description';
-  detailPrice.textContent=`$${product.price}`;
-  detailSeller.textContent=product.seller_email ? `Seller: ${product.seller_email}` : '';
+  detailTitle.textContent = product.title;
+  detailImage.innerHTML = product.image_url 
+    ? `<img src="${product.image_url}" style="max-width:100%;border-radius:8px">`
+    : `<div class="category-thumb ${getCategoryClass(product.category)}">${product.category[0]}</div>`;
+  detailDescription.textContent = product.description || 'No description';
+  detailPrice.textContent = `$${product.price}`;
+  detailSeller.textContent = product.seller_email ? `Seller: ${product.seller_email}` : '';
   productDetailOverlay.style.display='flex';
   productDetailOverlay.setAttribute('aria-hidden','false');
-  detailBuy.onclick=()=>alert(`Buying "${product.title}" for $${product.price} (simulated)`);
-  detailClose.onclick=()=>{productDetailOverlay.style.display='none'; productDetailOverlay.setAttribute('aria-hidden','true');};
+  detailBuy.onclick = ()=>alert(`Buying "${product.title}" for $${product.price} (simulated)`);
+  detailClose.onclick = ()=>{ productDetailOverlay.style.display='none'; productDetailOverlay.setAttribute('aria-hidden','true'); };
 }
 
 // -----------------------------
@@ -436,12 +434,13 @@ async function fetchProducts(){
   const activeCat = categoryBar.querySelector('.cat-btn.active')?.dataset.cat || 'all';
 
   let query = supabaseClient.from('Products').select('*').order('id',{ascending:false}).eq('approved',true);
-  if(activeCat!=='all') query=query.eq('category',activeCat);
+  if(activeCat!=='all') query = query.eq('category',activeCat);
 
   const { data, error } = await query;
   if(error){ console.warn('Fetch error:', error); return; }
 
-  productGrid.innerHTML=data.filter(p=>!searchTerm||p.title.toLowerCase().includes(searchTerm))
+  productGrid.innerHTML = data
+    .filter(p => !searchTerm || p.title.toLowerCase().includes(searchTerm))
     .map(p=>`<div class="product-card">
       ${p.image_url ? `<img src="${p.image_url}" />` : `<div class="category-thumb ${getCategoryClass(p.category)}">${p.category[0]}</div>`}
       <div class="product-info">
@@ -464,7 +463,9 @@ document.getElementById('openUploadNav').addEventListener('click', ()=> requireL
 document.getElementById('openUploadHero').addEventListener('click', ()=> requireLogin(showUpload));
 document.getElementById('cancelUpload').addEventListener('click', hideUpload);
 
+// -----------------------------
 // INITIAL FETCH
+// -----------------------------
 fetchProducts();
 </script>
 </body>
